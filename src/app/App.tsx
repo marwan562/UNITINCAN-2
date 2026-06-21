@@ -105,7 +105,9 @@ export default function App() {
                 <SolutionsSection />
                 <BenefitsSection />
                 <BlogSection />
+                <WelcomeSection setActivePage={setActivePage} />
                 <GetStartedSection />
+
               </motion.div>
             ) : (
               <motion.div
@@ -856,7 +858,97 @@ function BlogSection() {
   );
 }
 
+function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'about') => void }) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const handleGetToKnowClick = () => {
+    setActivePage("about");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <section id="welcome" ref={sectionRef} className="bg-[#f8f9fa] border-t border-gray-200 py-24 md:py-32 px-6 md:px-12 lg:px-20 relative overflow-hidden">
+      {/* Dynamic light gradient orb */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[100px] rounded-full z-0 pointer-events-none" />
+
+      <div className="max-w-[1200px] mx-auto flex flex-col justify-between relative z-10">
+        
+        {/* Welcome Tag */}
+        <div className="mb-12">
+          <span className="px-4 py-2 rounded-full border border-gray-300 text-[11px] font-mono font-semibold uppercase text-gray-500 tracking-wider bg-white">
+            Welcome
+          </span>
+        </div>
+
+        {/* Large Text Container with Inline Images */}
+        <div className="relative">
+          <h2 className="text-[28px] sm:text-[44px] md:text-[54px] leading-[1.25] font-bold text-gray-900 tracking-tight max-w-5xl">
+            We believe edge intelligence should be seamless. By engineering zero-trust telemetry nodes,
+            <span className="inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black relative group">
+              <svg viewBox="0 0 160 80" className="w-full h-full">
+                <style>{`
+                  @keyframes pulseSignal {
+                    0%, 100% { stroke-dashoffset: 200; opacity: 0.6; }
+                    50% { stroke-dashoffset: 0; opacity: 1; }
+                  }
+                  .signal-line {
+                    stroke-dasharray: 100;
+                    animation: pulseSignal 4s ease-in-out infinite;
+                  }
+                `}</style>
+                <path d="M 10 65 Q 80 -10, 150 45" fill="none" stroke="url(#blueNeon)" strokeWidth="2.5" className="signal-line" />
+                <defs>
+                  <linearGradient id="blueNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#0044ff" />
+                    <stop offset="100%" stopColor="#00d2ff" />
+                  </linearGradient>
+                </defs>
+                <circle cx="10" cy="65" r="3" fill="#ffffff" />
+                <circle cx="150" cy="45" r="3" fill="#00d2ff" className="animate-pulse" />
+              </svg>
+            </span>
+            real-time evaluation engines, and collaborative code automation, we unite hardware and software under a single orchestrator.
+            <span className="inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-[#050510] relative group">
+              <svg viewBox="0 0 160 80" className="w-full h-full p-2">
+                <rect x="8" y="12" width="45" height="4" fill="#0044ff" rx="1.5" />
+                <rect x="8" y="24" width="75" height="4" fill="#3b82f6" rx="1.5" />
+                <rect x="8" y="36" width="60" height="4" fill="#10b981" rx="1.5" />
+                <rect x="8" y="48" width="50" height="4" fill="#f59e0b" rx="1.5" />
+                <circle cx="125" cy="40" r="10" fill="none" stroke="#0044ff" strokeWidth="1.5" />
+                <circle cx="125" cy="40" r="4" fill="#0044ff" className="animate-ping" />
+                <circle cx="125" cy="40" r="4" fill="#00d2ff" />
+              </svg>
+            </span>
+            <span className="text-gray-400 font-medium">
+              Connecting the offline physical world to infinite logic streams, safely, reliably, and always one step ahead.
+            </span>
+          </h2>
+        </div>
+
+        {/* Bottom Right Triggers */}
+        <div className="flex justify-end items-center gap-4 mt-16 md:mt-24">
+          <button
+            onClick={handleGetToKnowClick}
+            className="px-6 py-3 rounded-full border border-gray-300 hover:border-black font-semibold text-[12px] text-gray-800 hover:text-black tracking-wider uppercase transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white"
+          >
+            Get to know us
+          </button>
+          
+          <button
+            onClick={handleGetToKnowClick}
+            className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:text-black hover:border-black transition-all hover:scale-110 cursor-pointer group bg-white"
+          >
+            <ArrowRight size={20} className="rotate-45 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform" />
+          </button>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 function GetStartedSection() {
+
   const sectionRef = useRef(null);
 
   useEffect(() => {
