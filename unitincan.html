@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNITINCAN — Intelligent Infrastructure for a Connected World</title>
+  <meta name="description" content="UNITINCAN builds enterprise-grade IoT automation and cultivates an open community at the frontier of connected hardware." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons (SVG sprite approach — we'll inline the icons we need) -->
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       CSS VARIABLES & RESET
+       ═══════════════════════════════════════════════ */
+    :root {
+      --bg: #ffffff;
+      --fg: #0a0a0a;
+      --fg-muted: #666666;
+      --accent: #0044ff;
+      --border: rgba(0, 0, 0, 0.08);
+      --bg-subtle: #fafafa;
+      --font-sans: 'Space Grotesk', sans-serif;
+      --font-pixel: 'Silkscreen', monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--fg);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb {
+      background: #d1d1d1;
+      border-radius: 5px;
+      border: 2px solid var(--bg);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+    /* ═══════════════════════════════════════════════
+       PRELOADER
+       ═══════════════════════════════════════════════ */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--accent);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 24px;
+      color: #fff;
+      transition: transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    #preloader.done {
+      transform: translateY(-100%);
+    }
+
+    #preloader-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    #preloader-center {
+      align-self: center;
+      font-family: var(--font-pixel);
+      font-size: clamp(6rem, 15vw, 12rem);
+      line-height: 1;
+    }
+
+    #preloader-bar {
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #preloader-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: #fff;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ═══════════════════════════════════════════════
+       NAVBAR
+       ═══════════════════════════════════════════════ */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.35s ease-in-out;
+    }
+
+    #navbar.hidden {
+      transform: translateY(-100%);
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-logo-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border: 2px solid var(--fg);
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-pixel);
+      font-size: 24px;
+      letter-spacing: -0.02em;
+      margin-top: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: var(--fg-muted);
+      font-weight: 500;
+      transition: color 0.2s, transform 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--fg);
+      transform: translateY(-2px);
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-cta .sign-in {
+      font-size: 14px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta .sign-in:hover { opacity: 0.7; }
+
+    .nav-cta .demo-btn {
+      font-size: 13px;
+      font-weight: 500;
+      background: transparent;
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: 1px solid var(--accent);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .nav-cta .demo-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .nav-cta .demo-btn:active { transform: scale(0.95); }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--fg);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .mobile-toggle { display: block; }
+    }
+
+    /* Mobile menu */
+    #mobile-menu {
+      position: fixed;
+      top: 80px;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 24px;
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      transform: translateY(-20px);
+      opacity: 0;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    #mobile-menu.open {
+      display: flex;
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #mobile-menu a {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════ */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 20vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 800px;
+      padding: 0 24px;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.2em;
+    }
+
+    .hero-title .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--fg-muted);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: transform 0.2s;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-sans);
+    }
+
+    .btn-primary:hover { transform: scale(1.05); }
+    .btn-primary:active { transform: scale(0.95); }
+
+    .btn-secondary {
+      background: var(--bg-subtle);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 14px 28px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .btn-secondary:hover {
+      background: var(--fg);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .btn-secondary:active { transform: scale(0.95); }
+
+    /* 3D Canvas */
+    #canvas-container {
+      position: absolute;
+      top: 40%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+      opacity: 0;
+    }
+
+    #canvas-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BENTO FEATURES
+       ═══════════════════════════════════════════════ */
+    #features {
+      padding: 120px 24px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .features-inner {
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      max-width: 600px;
+      margin-top: 16px;
+      line-height: 1.1;
+    }
+
+    .features-header {
+      margin-bottom: 60px;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .bento-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .bento-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .card-icon {
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--fg-muted);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      color: var(--fg-muted);
+      font-size: 14px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       INTEGRATION SECTION
+       ═══════════════════════════════════════════════ */
+    #solutions {
+      padding: 120px 24px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+    }
+
+    .solutions-inner {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .solutions-left {
+      flex: 1 1 300px;
+    }
+
+    .solutions-title {
+      font-size: clamp(2rem, 3.5vw, 2.5rem);
+      font-weight: 500;
+      letter-spacing: -0.03em;
+      margin-top: 16px;
+      margin-bottom: 40px;
+      line-height: 1.1;
+    }
+
+    .solutions-list-item {
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--fg-muted);
+      transition: transform 0.3s, color 0.3s;
+    }
+
+    .solutions-list-item:first-child { color: var(--fg); }
+    .solutions-list-item:last-child { border-bottom: 1px solid var(--border); }
+
+    .solutions-list-item:hover {
+      transform: translateX(10px);
+      color: var(--fg);
+    }
+
+    .solutions-list-item svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .solutions-right {
+      flex: 2 1 500px;
+      min-height: 400px;
+      background: linear-gradient(135deg, rgba(0,68,255,0.02) 0%, rgba(0,68,255,0.15) 100%);
+      border: 1px solid rgba(0,68,255,0.2);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .solutions-right::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .solutions-right p {
+      color: var(--accent);
+      font-weight: 500;
+      opacity: 0.8;
+      font-family: var(--font-pixel);
+      font-size: 24px;
+      z-index: 2;
+    }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════ */
+    #footer {
+      background: var(--fg);
+      color: #fff;
+      padding: 80px 24px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto 80px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .footer-logo-icon {
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+    }
+
+    .footer-logo-text {
+      font-family: var(--font-pixel);
+      font-size: 20px;
+      letter-spacing: -0.02em;
+      margin-top: 4px;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .footer-col ul {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col a {
+      color: #fff;
+      font-size: 14px;
+      transition: opacity 0.2s;
+    }
+
+    .footer-col a:hover { opacity: 0.7; }
+
+    .footer-big-text {
+      width: 100%;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .footer-big-text h1 {
+      font-family: var(--font-pixel);
+      font-size: clamp(4rem, 20vw, 24rem);
+      line-height: 0.8;
+      margin: 0;
+      color: #ffffff;
+      white-space: nowrap;
+      letter-spacing: -0.05em;
+      opacity: 0;
+      transform: translateY(100px);
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .hero-title { font-size: clamp(2.5rem, 8vw, 4rem); }
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-card.full-width { grid-column: auto; }
+      .solutions-inner { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════ PRELOADER ═══════════════ -->
+  <div id="preloader">
+    <div id="preloader-top">
+      <span>Unitincan</span>
+      <span>Loading...</span>
+    </div>
+    <div id="preloader-center">0%</div>
+    <div id="preloader-bar">
+      <div id="preloader-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="nav-logo-icon"></div>
+        <span class="nav-logo-text">UNITINCAN</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#">Developers</a>
+        <a href="#">Resources</a>
+      </div>
+      <div class="nav-cta">
+        <a href="#" class="sign-in">Sign In</a>
+        <a href="#" class="demo-btn">Request Demo</a>
+      </div>
+      <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu">
+    <a href="#features">Features</a>
+    <a href="#solutions">Solutions</a>
+    <a href="#">Developers</a>
+    <a href="#">Resources</a>
+  </div>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section id="hero">
+    <div class="hero-content">
+      <h1 class="hero-title" id="hero-title"></h1>
+      <p class="hero-subtitle" id="hero-subtitle">
+        Plan, Track, And Deliver Work Smoothly With Tools That Keep Your Team Aligned And On Schedule.
+      </p>
+      <div class="hero-buttons" id="hero-buttons">
+        <a href="#" class="btn-primary">Request Demo</a>
+        <a href="#" class="btn-secondary">Join Waitlist</a>
+      </div>
+    </div>
+    <div id="canvas-container"></div>
+  </section>
+
+  <!-- ═══════════════ BENTO FEATURES ═══════════════ -->
+  <section id="features">
+    <div class="features-inner">
+      <div class="features-header" id="features-header">
+        <span class="section-label">Features</span>
+        <h2 class="section-title">Built To Run Production Without Friction.</h2>
+      </div>
+
+      <div class="bento-grid">
+        <!-- Card 1 (Full Width) -->
+        <div class="bento-card full-width">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div>
+            <h3 class="card-title">Faster AI Deployment</h3>
+            <p class="card-desc">Launch Enterprise-Grade AI Agents In Days, Not Months.</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bento-card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div>
+            <h3 class="card-title">Enterprise-Grade Control</h3>
+            <p class="card-desc">Maintain Full Visibility, Governance, And Policy Enforcement.</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bento-card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+          </div>
+          <div>
+            <h3 class="card-title">Scalable Infrastructure</h3>
+            <p class="card-desc">Deploy AI Across Departments Without Rebuilding Architecture.</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bento-card">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+          </div>
+          <div>
+            <h3 class="card-title">Secure By Design</h3>
+            <p class="card-desc">Protect Data, Enforce Access Controls, And Meet Standards.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ INTEGRATION / SOLUTIONS ═══════════════ -->
+  <section id="solutions">
+    <div class="solutions-inner">
+      <div class="solutions-left">
+        <span class="section-label">Solutions</span>
+        <h2 class="solutions-title">Everything You Need To <br/> Run AI At Enterprise Scale.</h2>
+
+        <div>
+          <div class="solutions-list-item">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Integration Graph
+          </div>
+          <div class="solutions-list-item">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+            Agent Builder
+          </div>
+          <div class="solutions-list-item">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+            Workflow Automation Engine
+          </div>
+          <div class="solutions-list-item">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            Security &amp; Control
+          </div>
+        </div>
+      </div>
+
+      <div class="solutions-right">
+        <p>System Online</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer id="footer">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-logo-icon"></div>
+          <span class="footer-logo-text">UNITINCAN</span>
+        </div>
+        <p class="footer-copy">© 2026 Unitincan Inc.<br/>All rights reserved.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">Changelog</a></li>
+          <li><a href="#">Documentation</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">Github</a></li>
+          <li><a href="#">Discord</a></li>
+          <li><a href="#">Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-big-text">
+      <h1 id="footer-big">Unitincan</h1>
+    </div>
+  </footer>
+
+  <!-- ═══════════════ SCRIPTS ═══════════════ -->
+  <!-- Three.js from CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+
+  <script>
+    /* ═══════════════════════════════════════════════
+       PRELOADER
+       ═══════════════════════════════════════════════ */
+    (function initPreloader() {
+      const preloader = document.getElementById('preloader');
+      const centerText = document.getElementById('preloader-center');
+      const barFill = document.getElementById('preloader-bar-fill');
+      const duration = 2000;
+      const interval = 20;
+      const steps = duration / interval;
+      let step = 0;
+
+      const timer = setInterval(() => {
+        step++;
+        const progress = Math.min(Math.round((step / steps) * 100), 100);
+        centerText.textContent = progress + '%';
+        barFill.style.width = progress + '%';
+
+        if (step >= steps) {
+          clearInterval(timer);
+          setTimeout(() => {
+            preloader.classList.add('done');
+            // After the slide-up animation, remove preloader and start page animations
+            setTimeout(() => {
+              preloader.style.display = 'none';
+              startPageAnimations();
+            }, 800);
+          }, 400);
+        }
+      }, interval);
+    })();
+
+    /* ═══════════════════════════════════════════════
+       NAVBAR HIDE/SHOW ON SCROLL
+       ═══════════════════════════════════════════════ */
+    (function initNavbar() {
+      const navbar = document.getElementById('navbar');
+      let lastScrollY = 0;
+
+      window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY > lastScrollY && currentScrollY > 150) {
+          navbar.classList.add('hidden');
+        } else {
+          navbar.classList.remove('hidden');
+        }
+        lastScrollY = currentScrollY;
+      }, { passive: true });
+
+      // Mobile toggle
+      const toggle = document.getElementById('mobile-toggle');
+      const mobileMenu = document.getElementById('mobile-menu');
+      toggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+      });
+    })();
+
+    /* ═══════════════════════════════════════════════
+       HERO TITLE — SPLIT TEXT
+       ═══════════════════════════════════════════════ */
+    (function initHeroTitle() {
+      const title = document.getElementById('hero-title');
+      const words = "Manage Projects Without The Chaos".split(' ');
+      words.forEach(word => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = word;
+        title.appendChild(span);
+      });
+    })();
+
+    /* ═══════════════════════════════════════════════
+       PAGE ENTRANCE ANIMATIONS (after preloader)
+       ═══════════════════════════════════════════════ */
+    function startPageAnimations() {
+      // Hero words — staggered spring-like animation
+      const words = document.querySelectorAll('.hero-title .word');
+      words.forEach((word, i) => {
+        word.animate([
+          { opacity: 0, transform: 'translateY(40px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ], {
+          duration: 700,
+          delay: 400 + i * 100,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          fill: 'forwards'
+        });
+      });
+
+      // Subtitle
+      const subtitle = document.getElementById('hero-subtitle');
+      subtitle.animate([
+        { opacity: 0, transform: 'translateY(20px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], {
+        duration: 800,
+        delay: 1200,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+
+      // Buttons
+      const buttons = document.getElementById('hero-buttons');
+      buttons.animate([
+        { opacity: 0, transform: 'translateY(20px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], {
+        duration: 800,
+        delay: 1400,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+
+      // Canvas fade in
+      const canvas = document.getElementById('canvas-container');
+      canvas.animate([
+        { opacity: 0 },
+        { opacity: 1 }
+      ], {
+        duration: 2000,
+        delay: 1500,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+    }
+
+    /* ═══════════════════════════════════════════════
+       SCROLL-TRIGGERED ANIMATIONS (IntersectionObserver)
+       ═══════════════════════════════════════════════ */
+    (function initScrollAnimations() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const delay = parseInt(el.dataset.delay || '0');
+            el.animate([
+              { opacity: 0, transform: 'translateY(40px)' },
+              { opacity: 1, transform: 'translateY(0)' }
+            ], {
+              duration: 800,
+              delay: delay,
+              easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+              fill: 'forwards'
+            });
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '-50px' });
+
+      // Features header
+      observer.observe(document.getElementById('features-header'));
+
+      // Bento cards
+      document.querySelectorAll('.bento-card').forEach((card, i) => {
+        card.dataset.delay = String(i * 100);
+        observer.observe(card);
+      });
+
+      // Footer big text
+      const footerBig = document.getElementById('footer-big');
+      const footerObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            footerBig.animate([
+              { opacity: 0, transform: 'translateY(100px)' },
+              { opacity: 1, transform: 'translateY(0)' }
+            ], {
+              duration: 1200,
+              easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+              fill: 'forwards'
+            });
+            footerObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      footerObserver.observe(footerBig);
+    })();
+
+    /* ═══════════════════════════════════════════════
+       THREE.JS — PIXEL GLOBE
+       ═══════════════════════════════════════════════ */
+    (function initGlobe() {
+      const container = document.getElementById('canvas-container');
+
+      // Scene setup
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.Fog(0xffffff, 4, 10);
+
+      const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(0, 0, 6);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Generate sphere points using Fibonacci lattice
+      const count = 1500;
+      const radius = 2.5;
+      const positions = [];
+      const phi = Math.PI * (3 - Math.sqrt(5));
+
+      for (let i = 0; i < count; i++) {
+        const y = 1 - (i / (count - 1)) * 2;
+        const radiusAtY = Math.sqrt(1 - y * y);
+        const theta = phi * i;
+        const x = Math.cos(theta) * radiusAtY;
+        const z = Math.sin(theta) * radiusAtY;
+        positions.push(x * radius, y * radius, z * radius);
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+      const material = new THREE.PointsMaterial({
+        color: 0x0044ff,
+        size: 0.06,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      const points = new THREE.Points(geometry, material);
+      const group = new THREE.Group();
+      group.add(points);
+
+      // Inner glow sphere
+      const sphereGeo = new THREE.SphereGeometry(2.4, 32, 32);
+      const sphereMat = new THREE.MeshBasicMaterial({ color: 0x0044ff, transparent: true, opacity: 0.03 });
+      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+      group.add(sphere);
+
+      scene.add(group);
+
+      // Mouse tracking
+      const mouse = { x: 0, y: 0 };
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      });
+
+      // Animation loop
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+        const delta = clock.getDelta();
+
+        // Base rotation
+        group.rotation.y += 0.002;
+
+        // Mouse parallax
+        const targetX = mouse.y * 0.3 + Math.sin(elapsed * 0.2) * 0.2;
+        group.rotation.x += (targetX - group.rotation.x) * 0.1;
+        group.position.x += (mouse.x * 0.8 - group.position.x) * 0.05;
+        group.position.y += (mouse.y * 0.8 - group.position.y) * 0.05;
+
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // Resize handler
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    })();
+  </script>
+</body>
+</html>
