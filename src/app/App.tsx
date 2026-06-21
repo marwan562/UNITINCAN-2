@@ -862,10 +862,11 @@ function GetStartedSection() {
 
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 lg:px-8 flex justify-start lg:justify-end">
         <div className="w-full max-w-[460px] lg:mr-[5%]">
-          <h2 className="anim-text text-[36px] md:text-[44px] lg:text-[54px] font-bold text-white leading-[1.1] mb-8 lg:mb-10 tracking-tight">
+          <h2 className="anim-text text-[36px] md:text-[44px] lg:text-[54px] font-bold leading-[1.1] mb-8 lg:mb-10 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white">
             Get started with<br />
-            <span className="text-[#0044ff]">UNITINCAN</span>
+            UNITINCAN
           </h2>
+
 
           <div className="anim-text flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 lg:mb-10 w-full sm:w-auto">
             <button className="target-btn w-full sm:w-auto bg-white/5 text-gray-400 font-mono text-[13px] font-semibold px-8 py-4 rounded-lg hover:scale-105 transition-transform duration-300 shadow-sm text-center uppercase tracking-wide">
