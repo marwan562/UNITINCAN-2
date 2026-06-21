@@ -10,31 +10,36 @@ import ScrubTextReveal from "./components/ScrubTextReveal";
 import DashboardDots2D from "./components/DashboardDots2D";
 import HalftoneCircle2D from "./components/HalftoneCircle2D";
 import FlowBuilder from "./components/flow/FlowBuilder";
+import AboutSection from "./components/AboutSection";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
+  const [activePage, setActivePage] = useState<'landing' | 'about'>('landing');
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || activePage !== "landing") return;
 
     const ctx = gsap.context(() => {
-      const reveals = gsap.utils.toArray(".gsap-reveal");
-      reveals.forEach((el: any) => {
-        gsap.from(el, {
-          y: 40,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-          }
+      setTimeout(() => {
+        const reveals = gsap.utils.toArray(".gsap-reveal");
+        reveals.forEach((el: any) => {
+          gsap.from(el, {
+            y: 40,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+            }
+          });
         });
-      });
+        ScrollTrigger.refresh();
+      }, 50);
     });
 
     return () => ctx.revert();
-  }, [loading]);
+  }, [loading, activePage]);
 
   return (
     <div className="bg-white text-gray-900 flex flex-col min-h-screen font-sans selection:bg-[#0044ff] selection:text-white">
@@ -43,22 +48,45 @@ export default function App() {
       </AnimatePresence>
 
       <div className="flex-grow">
-        <Header />
+        <Header activePage={activePage} setActivePage={setActivePage} />
         <main>
-          <HeroSection animateIn={!loading} />
-          <MockupSection />
-          <SolutionsSection />
-          <BenefitsSection />
-          <BlogSection />
-          <GetStartedSection />
+          <AnimatePresence mode="wait">
+            {activePage === "landing" ? (
+              <motion.div
+                key="landing-page"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <HeroSection animateIn={!loading} />
+                <MockupSection />
+                <SolutionsSection />
+                <BenefitsSection />
+                <BlogSection />
+                <GetStartedSection />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="about-page"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <AboutSection />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
-        <Footer />
+        <Footer activePage={activePage} setActivePage={setActivePage} />
       </div>
     </div>
   );
 }
 
-function Header() {
+
+function Header({ activePage, setActivePage }: { activePage: string; setActivePage: (p: 'landing' | 'about') => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -137,12 +165,18 @@ function Header() {
     });
   }, [menuOpen]);
 
-  const navItems = ["Automation", "Solutions", "Benefits", "Blog"];
+  const navItems = ["Automation", "Solutions", "Benefits", "Blog", "About"];
   const navMap: Record<string, string> = {
     "Automation": "automation",
     "Solutions": "solutions",
     "Benefits": "benefits",
-    "Blog": "blog"
+    "Blog": "blog",
+    "About": "about"
+  };
+
+  const handleLogoClick = () => {
+    setActivePage("landing");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -170,12 +204,12 @@ function Header() {
           }}
         >
           {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer group">
+          <div onClick={handleLogoClick} className="flex items-center gap-2 cursor-pointer group">
             <span
               style={{ fontFamily: "var(--font-sans)" }}
               className="font-bold tracking-wide uppercase"
             >
-              <span className={`transition-all duration-500 ${scrolled ? "text-[16px]" : "text-xl"}`}>
+              <span className={`transition-all duration-500 ${scrolled ? "text-[16px] text-[#0044ff]" : "text-xl text-black hover:text-[#0044ff]"}`}>
                 UNITINCAN
               </span>
             </span>
@@ -199,9 +233,27 @@ function Header() {
                   href={`#${targetId}`}
                   onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                    if (targetId === "about") {
+                      setActivePage("about");
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    } else {
+                      if (activePage !== "landing") {
+                        setActivePage("landing");
+                        setTimeout(() => {
+                          document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                        }, 150);
+                      } else {
+                        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }
                   }}
-                  className="text-[15px] text-gray-600 hover:text-black font-medium transition-colors whitespace-nowrap"
+                  className={`text-[15px] font-medium transition-colors whitespace-nowrap ${
+                    item === "About" && activePage === "about"
+                      ? "text-[#0044ff]"
+                      : activePage === "about" && item !== "About"
+                      ? "text-gray-400 hover:text-black"
+                      : "text-gray-600 hover:text-black"
+                  }`}
                 >
                   {item}
                 </a>
@@ -291,17 +343,34 @@ function Header() {
                 <div key={item} className="overflow-hidden">
                   <a
                     href={`#${targetId}`}
-                    className="menu-link block text-[clamp(36px,6vw,72px)] font-bold text-white/90 hover:text-[#0044ff] transition-colors duration-300 leading-[1.15] tracking-tight"
+                    className={`menu-link block text-[clamp(36px,6vw,72px)] font-bold transition-colors duration-300 leading-[1.15] tracking-tight ${
+                      item === "About" && activePage === "about"
+                        ? "text-[#0044ff]"
+                        : "text-white/90 hover:text-[#0044ff]"
+                    }`}
                     style={{ perspective: "600px" }}
                     onClick={(e) => {
                       setMenuOpen(false);
                       e.preventDefault();
                       setTimeout(() => {
-                        document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                        if (targetId === "about") {
+                          setActivePage("about");
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        } else {
+                          if (activePage !== "landing") {
+                            setActivePage("landing");
+                            setTimeout(() => {
+                              document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                            }, 150);
+                          } else {
+                            document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                          }
+                        }
                       }, 500);
                     }}
                   >
                     <span className="text-[#0044ff]/80 font-mono text-[14px] mr-4 align-top">
+
                       0{i + 1}
                     </span>
                     {item}
@@ -816,7 +885,7 @@ function GetStartedSection() {
   );
 }
 
-function Footer() {
+function Footer({ activePage, setActivePage }: { activePage: string; setActivePage: (p: 'landing' | 'about') => void }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -867,11 +936,42 @@ function Footer() {
         <div>
           <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 20, color: "rgba(255,255,255,0.5)" }}>Company</h4>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-            <li><a href="#" style={{ color: "#fff", textDecoration: "none", fontSize: 14 }}>About</a></li>
+            <li>
+              <a
+                href="#about"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActivePage("about");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                style={{ color: "#fff", textDecoration: "none", fontSize: 14 }}
+              >
+                About
+              </a>
+            </li>
             <li><a href="#" style={{ color: "#fff", textDecoration: "none", fontSize: 14 }}>Careers</a></li>
-            <li><a href="#" style={{ color: "#fff", textDecoration: "none", fontSize: 14 }}>Blog</a></li>
+            <li>
+              <a
+                href="#blog"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (activePage !== "landing") {
+                    setActivePage("landing");
+                    setTimeout(() => {
+                      document.getElementById("blog")?.scrollIntoView({ behavior: "smooth" });
+                    }, 150);
+                  } else {
+                    document.getElementById("blog")?.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                style={{ color: "#fff", textDecoration: "none", fontSize: 14 }}
+              >
+                Blog
+              </a>
+            </li>
           </ul>
         </div>
+
 
         <div>
           <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 20, color: "rgba(255,255,255,0.5)" }}>Contact</h4>
