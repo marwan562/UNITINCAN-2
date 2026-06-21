@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Award, ShieldCheck, Zap, Server, Network } from "lucide-react";
+import { Award, ShieldCheck, Zap, Server, Network } from "lucide-react";
+import { GlowButton, GlassCircleButton } from "./ui/PremiumButtons";
 
 export default function AboutSection() {
   const nextSectionRef = useRef<HTMLDivElement>(null);
@@ -103,9 +104,7 @@ export default function AboutSection() {
             <p className="text-[18px] md:text-[20px] text-gray-600 leading-relaxed max-w-xl mb-8">
               We design and construct intelligent nodes that deploy instantly, process logic locally, and route telemetry with military-grade safety. From complex hardware pipelines to low-latency cloud synchronization, we build systems that scale.
             </p>
-            <button className="px-6 py-3 rounded-full bg-[#0044ff] text-white hover:bg-blue-700 transition-all font-semibold text-[14px] tracking-wide shadow-lg shadow-[#0044ff]/20 hover:scale-[1.02]">
-              Explore Platform
-            </button>
+            <GlowButton>Explore Platform</GlowButton>
           </div>
         </div>
 
@@ -271,9 +270,7 @@ export default function AboutSection() {
                   Connected Edge Systems
                 </span>
               </div>
-              <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all text-white mt-8 cursor-pointer">
-                <ArrowRight size={16} />
-              </button>
+              <GlassCircleButton size={40} className="mt-8" />
             </div>
 
             {/* Stat 2 */}
@@ -286,9 +283,7 @@ export default function AboutSection() {
                   Telemetry Delivery Uptime
                 </span>
               </div>
-              <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all text-white mt-8 cursor-pointer">
-                <ArrowRight size={16} />
-              </button>
+              <GlassCircleButton size={40} className="mt-8" />
             </div>
 
             {/* Stat 3 */}
@@ -301,9 +296,7 @@ export default function AboutSection() {
                   Faster Pipeline Compilation
                 </span>
               </div>
-              <button className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black hover:scale-110 transition-all text-white mt-8 cursor-pointer">
-                <ArrowRight size={16} />
-              </button>
+              <GlassCircleButton size={40} className="mt-8" />
             </div>
 
           </div>

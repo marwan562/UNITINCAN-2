@@ -70,3 +70,13 @@ html, body {
   mix-blend-mode: multiply;
   z-index: 10;
 }
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+

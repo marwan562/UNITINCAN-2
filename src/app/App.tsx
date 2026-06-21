@@ -11,10 +11,20 @@ import DashboardDots2D from "./components/DashboardDots2D";
 import HalftoneCircle2D from "./components/HalftoneCircle2D";
 import FlowBuilder from "./components/flow/FlowBuilder";
 import AboutSection from "./components/AboutSection";
+import { GlowButton, FluidCapsuleMenu } from "./components/ui/PremiumButtons";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState<'landing' | 'about'>('landing');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 150);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (loading || activePage !== "landing") return;
@@ -41,6 +51,7 @@ export default function App() {
     return () => ctx.revert();
   }, [loading, activePage]);
 
+
   return (
     <div className="bg-white text-gray-900 flex flex-col min-h-screen font-sans selection:bg-[#0044ff] selection:text-white">
       <AnimatePresence>
@@ -49,7 +60,37 @@ export default function App() {
 
       <div className="flex-grow">
         <Header activePage={activePage} setActivePage={setActivePage} />
+
+        {/* Floating Quick Nav Metaball Capsule */}
+        <AnimatePresence>
+          {activePage === "landing" && scrolled && (
+            <motion.div
+              key="floating-capsule-nav"
+              initial={{ y: 80, x: "-50%", opacity: 0 }}
+              animate={{ y: 0, x: "-50%", opacity: 1 }}
+              exit={{ y: 80, x: "-50%", opacity: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 24 }}
+              className="fixed bottom-8 left-1/2 z-50 hidden md:block"
+            >
+              <FluidCapsuleMenu
+                onLinkClick={(link) => {
+                  const targetId = link === "security" ? "automation" : link === "products" ? "solutions" : "benefits";
+                  document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth" });
+                }}
+                onCtaClick={() => {
+                  alert("Thank you for your interest! A UNITINCAN edge engineering expert will reach out shortly to schedule your demo.");
+                }}
+                onLogoClick={() => {
+                  setActivePage("about");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <main>
+
           <AnimatePresence mode="wait">
             {activePage === "landing" ? (
               <motion.div
@@ -461,14 +502,21 @@ function HeroSection({ animateIn }: { animateIn: boolean }) {
         <p className="hero-desc text-[17px] md:text-[19px] text-gray-500 leading-relaxed max-w-[640px] mx-auto mb-10">
           Design, Deploy, And Scale IoT Solutions Smoothly With Enterprise Tools That Keep Your Hardware Aligned And Connected.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-4 pointer-events-auto">
-          <a href="#" className="bg-[#0044ff] text-white py-4 rounded-lg text-[15px] font-semibold hover:bg-blue-700 transition-transform hover:scale-105 shadow-lg shadow-blue-500/20 w-full sm:w-[200px] flex justify-center items-center text-center">
+        <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-4 pointer-events-auto hero-btn">
+          <GlowButton 
+            className="w-full sm:w-[200px]"
+            onClick={() => document.getElementById("automation")?.scrollIntoView({ behavior: "smooth" })}
+          >
             Request Demo
-          </a>
-          <a href="#" className="bg-white text-gray-800 py-4 rounded-lg text-[15px] font-semibold border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors w-full sm:w-[200px] flex justify-center items-center text-center">
+          </GlowButton>
+          <button 
+            onClick={() => document.getElementById("solutions")?.scrollIntoView({ behavior: "smooth" })}
+            className="bg-white text-gray-850 py-3.5 rounded-xl text-[14px] font-semibold border border-gray-250 shadow-sm hover:bg-gray-50 transition-all duration-300 hover:scale-[1.02] cursor-pointer w-full sm:w-[200px]"
+          >
             Explore Platform
-          </a>
+          </button>
         </div>
+
       </section>
     </div>
   );
@@ -869,13 +917,20 @@ function GetStartedSection() {
 
 
           <div className="anim-text flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 lg:mb-10 w-full sm:w-auto">
-            <button className="target-btn w-full sm:w-auto bg-white/5 text-gray-400 font-mono text-[13px] font-semibold px-8 py-4 rounded-lg hover:scale-105 transition-transform duration-300 shadow-sm text-center uppercase tracking-wide">
+            <GlowButton 
+              className="w-full sm:w-auto"
+              onClick={() => document.getElementById("automation")?.scrollIntoView({ behavior: "smooth" })}
+            >
               Start building
-            </button>
-            <button className="w-full sm:w-auto bg-transparent border border-white/20 text-white font-mono text-[13px] font-semibold px-8 py-4 rounded-lg hover:bg-white/5 transition-colors duration-300 text-center uppercase tracking-wide">
+            </GlowButton>
+            <button 
+              onClick={() => alert("Thank you for your interest! A UNITINCAN edge engineering expert will reach out shortly to schedule your demo.")}
+              className="w-full sm:w-auto bg-transparent border border-white/20 text-white font-mono text-[13px] font-semibold px-8 py-3.5 rounded-xl hover:bg-white/5 transition-colors duration-300 text-center uppercase tracking-wide cursor-pointer"
+            >
               Get a demo
             </button>
           </div>
+
 
           <p className="anim-text text-gray-400 text-[15px] sm:text-[16px] leading-relaxed max-w-[400px]">
             Use UNITINCAN, the agent engineering platform, to improve every step of the connected infrastructure lifecycle.
