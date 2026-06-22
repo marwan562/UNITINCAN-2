@@ -471,7 +471,7 @@ function FlowBuilderInner() {
   }, [setNodes, setEdges]);
 
   return (
-    <div className="flex flex-col md:flex-row h-[700px] w-full text-slate-800 bg-[#f8fafc] rounded-b-2xl overflow-hidden relative">
+    <div className="flex flex-col md:flex-row h-[700px] w-full text-slate-800 bg-[#f8fafc] rounded-b-[24px] overflow-hidden relative">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur text-white px-4 py-2 rounded-xl text-xs font-semibold shadow-xl border border-white/10 flex items-center gap-2 animate-bounce">

@@ -12,6 +12,9 @@ import HalftoneCircle2D from "./components/HalftoneCircle2D";
 import FlowBuilder from "./components/flow/FlowBuilder";
 import AboutSection from "./components/AboutSection";
 import { GlowButton, FluidCapsuleMenu } from "./components/ui/PremiumButtons";
+import { Users, Clock } from "lucide-react";
+import secImg1 from "../static/images/sec-img1-6.jpg";
+import secImg2 from "../static/images/sec-img2-6.jpg";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -106,6 +109,7 @@ export default function App() {
                 <BenefitsSection />
                 <BlogSection />
                 <WelcomeSection setActivePage={setActivePage} />
+                <StatsBentoSection />
                 <GetStartedSection />
 
               </motion.div>
@@ -532,21 +536,69 @@ function MockupSection() {
       </div>
 
       <div className="relative z-10 max-w-[1200px] mx-auto px-4">
-        <motion.div
-          initial={{ y: 60, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="bg-white rounded-t-2xl rounded-b-lg shadow-2xl overflow-hidden border border-gray-200/50 backdrop-blur-sm bg-white/95 ring-1 ring-black/5"
-        >
-          {/* Mac OS window header dots */}
-          <div className="h-12 border-b border-gray-100 flex items-center px-5 gap-2.5 bg-gray-50/80">
-            <div className="w-3.5 h-3.5 rounded-full bg-red-400"></div>
-            <div className="w-3.5 h-3.5 rounded-full bg-amber-400"></div>
-            <div className="w-3.5 h-3.5 rounded-full bg-green-400"></div>
-          </div>
-          <FlowBuilder />
-        </motion.div>
+        <div className="relative">
+          {/* Ambient Glow behind the mockup (blurred neon blue/cyan light trail) */}
+          <svg className="absolute -inset-6 w-[calc(100%+48px)] h-[calc(100%+48px)] pointer-events-none z-0" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="glowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#00f0ff" />
+                <stop offset="50%" stopColor="#0044ff" />
+                <stop offset="100%" stopColor="#00f0ff" />
+              </linearGradient>
+            </defs>
+            <rect
+              x="24"
+              y="24"
+              width="calc(100% - 48px)"
+              height="calc(100% - 48px)"
+              rx="24"
+              fill="none"
+              stroke="url(#glowGradient)"
+              strokeWidth="10"
+              pathLength="1000"
+              className="animate-glow-border opacity-60 blur-xl"
+              style={{
+                strokeDasharray: "150 183 150 183 150 184",
+              }}
+            />
+          </svg>
+
+          <motion.div
+            initial={{ y: 60, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="bg-white rounded-[24px] shadow-2xl overflow-hidden border border-gray-200/40 backdrop-blur-sm bg-white/95 ring-1 ring-black/5 relative z-10"
+          >
+            {/* Mac OS window header dots */}
+            <div className="h-12 border-b border-gray-100 flex items-center px-5 gap-2.5 bg-gray-50/80">
+              <div className="w-3.5 h-3.5 rounded-full bg-red-400"></div>
+              <div className="w-3.5 h-3.5 rounded-full bg-amber-400"></div>
+              <div className="w-3.5 h-3.5 rounded-full bg-green-400"></div>
+            </div>
+            
+            <FlowBuilder />
+
+            {/* Sharp moving border line overlay (inside container border to prevent clipping) */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none z-30" xmlns="http://www.w3.org/2000/svg">
+              <rect
+                x="1.5"
+                y="1.5"
+                width="calc(100% - 3px)"
+                height="calc(100% - 3px)"
+                rx="22.5"
+                fill="none"
+                stroke="url(#glowGradient)"
+                strokeWidth="3"
+                pathLength="1000"
+                className="animate-glow-border"
+                style={{
+                  strokeDasharray: "150 183 150 183 150 184",
+                }}
+              />
+            </svg>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -983,6 +1035,148 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
   );
 }
 
+function StatsBentoSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   const ctx = gsap.context(() => {
+  //     // Stagger entrance animation for bento cards
+  //     gsap.from(".bento-card", {
+  //       y: 60,
+  //       opacity: 0,
+  //       duration: 0.8,
+  //       stagger: 0.15,
+  //       ease: "power4.out",
+  //       scrollTrigger: {
+  //         trigger: sectionRef.current,
+  //         start: "top 75%",
+  //       }
+  //     });
+  //   }, sectionRef);
+
+  //   return () => ctx.revert();
+  // }, []);
+
+  return (
+    <section ref={sectionRef} className="max-w-[1300px] mx-auto px-8 py-16 md:py-24 relative overflow-hidden">
+      {/* Soft blue visual backing glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] rounded-full z-0 pointer-events-none" />
+
+      <div className="grid grid-cols-12 gap-6 md:gap-8 relative z-10">
+        
+        {/* Card 1: $5 Million (top-left, wide) */}
+        <div className="bento-card col-span-12 md:col-span-7 bg-[#0a0a0a] rounded-[24px] p-8 md:p-10 flex flex-col justify-between min-h-[280px] md:h-[320px] text-white relative overflow-hidden group border border-white/5 hover:border-white/15 transition-all duration-500 shadow-xl">
+          {/* Active sweeping reflection gradient */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease_infinite] pointer-events-none" />
+          
+          <div className="text-gray-400 font-mono text-[11px] uppercase tracking-[0.2em] relative z-10">
+            Efficiency Gains
+          </div>
+          
+          <div className="my-auto relative z-10">
+            <h3 className="text-[44px] md:text-[56px] font-bold tracking-tight leading-none mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white via-neutral-100 to-neutral-400">
+              $5 MILLION
+            </h3>
+            <p className="text-[15px] md:text-[16px] text-neutral-400 font-medium max-w-md leading-normal">
+              saved annually in edge maintenance costs by deploying UNITINCAN zero-trust telemetry.
+            </p>
+          </div>
+        </div>
+
+        {/* Card 2: Architectural glass/metal (top-right, taller, image background) */}
+        <div className="bento-card col-span-12 md:col-span-5 rounded-[24px] min-h-[340px] md:h-[320px] relative overflow-hidden group shadow-xl">
+          <img 
+            src={secImg1} 
+            alt="UNITINCAN Laboratories" 
+            className="absolute inset-0 w-full h-full object-cover contrast-110 group-hover:scale-105 group-hover:grayscale-0 transition-all duration-700 ease-out" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 z-10" />
+          
+          {/* Top-right floating glass pill */}
+          <div className="absolute top-6 right-6 z-20 backdrop-blur-md bg-white/10 border border-white/10 px-4 py-1.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">
+            Munich Hub
+          </div>
+
+          <div className="absolute bottom-6 left-6 right-6 z-20">
+            <p className="text-[12px] font-mono text-gray-400 uppercase tracking-widest mb-1">Infrastructure</p>
+            <h4 className="text-[19px] font-bold text-white tracking-tight">High-density node networks.</h4>
+          </div>
+        </div>
+
+        {/* Card 3: Curved concrete structure (bottom-left, wide) */}
+        <div className=" col-span-12 md:col-span-6 rounded-[24px] min-h-[260px] md:h-[280px] relative overflow-hidden group shadow-xl">
+          <img 
+            src={secImg2} 
+            alt="UNITINCAN Geneva" 
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10 z-10" />
+
+          {/* Top-left floating glass pill */}
+          <div className="absolute top-6 left-6 z-20 backdrop-blur-md bg-white/10 border border-white/10 px-4 py-1.5 rounded-full text-[10px] font-bold text-white uppercase tracking-wider">
+            Geneva Lab
+          </div>
+
+          <div className="absolute bottom-6 left-6 right-6 z-20">
+            <p className="text-[12px] font-mono text-gray-400 uppercase tracking-widest mb-1">Architecture</p>
+            <h4 className="text-[19px] font-bold text-white tracking-tight">Edge orchestration at scale.</h4>
+          </div>
+        </div>
+
+        {/* Card 4: 2B connected users/nodes (bottom-middle) */}
+        <div className="bento-card col-span-12 sm:col-span-6 md:col-span-3 bg-[#e2e8e4] rounded-[24px] p-8 flex flex-col justify-between min-h-[260px] md:h-[280px] text-neutral-900 group shadow-sm border border-neutral-250/20 hover:shadow-md transition-all duration-500">
+          <div className="text-[11px] font-mono font-bold text-neutral-500 uppercase tracking-[0.2em]">
+            Scale
+          </div>
+          
+          <div className="my-auto">
+            <h3 className="text-[48px] font-bold tracking-tight leading-none mb-1 text-[#2d3a34]">
+              2 B
+            </h3>
+            <p className="text-[15px] font-bold text-neutral-800 leading-tight">
+              users
+            </p>
+            <p className="text-[12px] text-neutral-500 font-medium tracking-wide mt-1">
+              world wide
+            </p>
+          </div>
+
+          <div className="flex justify-end mt-auto">
+            <div className="w-9 h-9 rounded-xl bg-white/80 backdrop-blur-sm border border-white/50 flex items-center justify-center shadow-sm group-hover:-translate-y-1 group-hover:scale-105 transition-all duration-300">
+              <Users size={16} className="text-[#2d3a34]" />
+            </div>
+          </div>
+        </div>
+
+        {/* Card 5: 365 days uptime (bottom-right) */}
+        <div className="bento-card col-span-12 sm:col-span-6 md:col-span-3 bg-[#abb4b0] rounded-[24px] p-8 flex flex-col justify-between min-h-[260px] md:h-[280px] text-neutral-900 group shadow-sm border border-neutral-300/30 hover:shadow-md transition-all duration-500">
+          <div className="text-[11px] font-mono font-bold text-neutral-600 uppercase tracking-[0.2em]">
+            Availability
+          </div>
+
+          <div className="my-auto">
+            <h3 className="text-[48px] font-bold tracking-tight leading-none mb-1 text-neutral-950">
+              365
+            </h3>
+            <p className="text-[15px] font-bold text-neutral-900 leading-tight">
+              days
+            </p>
+            <p className="text-[12px] text-neutral-650 font-medium tracking-wide mt-1">
+              year around
+            </p>
+          </div>
+
+          <div className="flex justify-end mt-auto">
+            <div className="w-9 h-9 rounded-xl bg-white/60 backdrop-blur-sm border border-white/30 flex items-center justify-center shadow-sm group-hover:-translate-y-1 group-hover:scale-105 transition-all duration-300">
+              <Clock size={16} className="text-neutral-950" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
 
 function GetStartedSection() {
 

@@ -80,3 +80,17 @@ html, body {
   }
 }
 
+@keyframes glowBorder {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-glow-border {
+  animation: glowBorder 8s linear infinite;
+}
+
+
