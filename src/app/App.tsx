@@ -860,11 +860,73 @@ function BlogSection() {
 
 function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'about') => void }) {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   const handleGetToKnowClick = () => {
     setActivePage("about");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const splitPrimary = (text: string) => {
+    return text.split(" ").map((word, idx) => (
+      <span key={idx} className="reveal-word-primary inline-block mr-[0.22em] transition-colors" style={{ color: "rgba(10, 10, 10, 0.15)" }}>
+        {word}
+      </span>
+    ));
+  };
+
+  const splitSecondary = (text: string) => {
+    return text.split(" ").map((word, idx) => (
+      <span key={idx} className="reveal-word-secondary inline-block mr-[0.22em] transition-colors" style={{ color: "rgba(10, 10, 10, 0.15)" }}>
+        {word}
+      </span>
+    ));
+  };
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Scrub primary words to solid black
+      gsap.to(".reveal-word-primary", {
+        color: "#0a0a0a",
+        stagger: 0.02,
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 82%",
+          end: "bottom 45%",
+          scrub: 0.8,
+        }
+      });
+
+      // 2. Scrub secondary words to gray
+      gsap.to(".reveal-word-secondary", {
+        color: "#7c7c80",
+        stagger: 0.02,
+        scrollTrigger: {
+          trigger: headingRef.current,
+          start: "top 75%",
+          end: "bottom 38%",
+          scrub: 0.8,
+        }
+      });
+
+      // 3. Scrub inline graphics to full scale & opacity
+      gsap.fromTo(".reveal-graphic", 
+        { opacity: 0.25, scale: 0.88 },
+        {
+          opacity: 1,
+          scale: 1,
+          scrollTrigger: {
+            trigger: headingRef.current,
+            start: "top 80%",
+            end: "bottom 40%",
+            scrub: 0.8,
+          }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section id="welcome" ref={sectionRef} className="bg-[#f8f9fa] border-t border-gray-200 py-24 md:py-32 px-6 md:px-12 lg:px-20 relative overflow-hidden">
@@ -874,7 +936,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
       <div className="max-w-[1200px] mx-auto flex flex-col justify-between relative z-10">
         
         {/* Welcome Tag */}
-        <div className="mb-12">
+        <div className="mb-12 gsap-reveal">
           <span className="px-4 py-2 rounded-full border border-gray-300 text-[11px] font-mono font-semibold uppercase text-gray-500 tracking-wider bg-white">
             Welcome
           </span>
@@ -882,9 +944,9 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
 
         {/* Large Text Container with Inline Images */}
         <div className="relative">
-          <h2 className="text-[28px] sm:text-[44px] md:text-[54px] leading-[1.25] font-bold text-gray-900 tracking-tight max-w-5xl">
-            We believe edge intelligence should be seamless. By engineering zero-trust telemetry nodes,
-            <span className="inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black relative group">
+          <h2 ref={headingRef} className="text-[28px] sm:text-[44px] md:text-[54px] leading-[1.25] font-bold text-gray-900 tracking-tight max-w-5xl">
+            {splitPrimary("We believe edge intelligence should be seamless. By engineering zero-trust telemetry nodes,")}
+            <span className="reveal-graphic inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black relative group">
               <svg viewBox="0 0 160 80" className="w-full h-full">
                 <style>{`
                   @keyframes pulseSignal {
@@ -907,8 +969,8 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
                 <circle cx="150" cy="45" r="3" fill="#00d2ff" className="animate-pulse" />
               </svg>
             </span>
-            real-time evaluation engines, and collaborative code automation, we unite hardware and software under a single orchestrator.
-            <span className="inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-[#050510] relative group">
+            {splitPrimary("real-time evaluation engines, and collaborative code automation, we unite hardware and software under a single orchestrator.")}
+            <span className="reveal-graphic inline-block align-middle w-20 sm:w-32 h-10 sm:h-16 mx-3 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-[#050510] relative group">
               <svg viewBox="0 0 160 80" className="w-full h-full p-2">
                 <rect x="8" y="12" width="45" height="4" fill="#0044ff" rx="1.5" />
                 <rect x="8" y="24" width="75" height="4" fill="#3b82f6" rx="1.5" />
@@ -919,14 +981,12 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
                 <circle cx="125" cy="40" r="4" fill="#00d2ff" />
               </svg>
             </span>
-            <span className="text-gray-400 font-medium">
-              Connecting the offline physical world to infinite logic streams, safely, reliably, and always one step ahead.
-            </span>
+            {splitSecondary("Connecting the offline physical world to infinite logic streams, safely, reliably, and always one step ahead.")}
           </h2>
         </div>
 
         {/* Bottom Right Triggers */}
-        <div className="flex justify-end items-center gap-4 mt-16 md:mt-24">
+        <div className="flex justify-end items-center gap-4 mt-16 md:mt-24 gsap-reveal">
           <button
             onClick={handleGetToKnowClick}
             className="px-6 py-3 rounded-full border border-gray-300 hover:border-black font-semibold text-[12px] text-gray-800 hover:text-black tracking-wider uppercase transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white"
@@ -946,6 +1006,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
     </section>
   );
 }
+
 
 function GetStartedSection() {
 
