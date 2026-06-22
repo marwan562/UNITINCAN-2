@@ -290,13 +290,12 @@ function Header({ activePage, setActivePage }: { activePage: string; setActivePa
                       }
                     }
                   }}
-                  className={`text-[15px] font-medium transition-colors whitespace-nowrap ${
-                    item === "About" && activePage === "about"
-                      ? "text-[#0044ff]"
-                      : activePage === "about" && item !== "About"
+                  className={`text-[15px] font-medium transition-colors whitespace-nowrap ${item === "About" && activePage === "about"
+                    ? "text-[#0044ff]"
+                    : activePage === "about" && item !== "About"
                       ? "text-gray-400 hover:text-black"
                       : "text-gray-600 hover:text-black"
-                  }`}
+                    }`}
                 >
                   {item}
                 </a>
@@ -386,11 +385,10 @@ function Header({ activePage, setActivePage }: { activePage: string; setActivePa
                 <div key={item} className="overflow-hidden">
                   <a
                     href={`#${targetId}`}
-                    className={`menu-link block text-[clamp(36px,6vw,72px)] font-bold transition-colors duration-300 leading-[1.15] tracking-tight ${
-                      item === "About" && activePage === "about"
-                        ? "text-[#0044ff]"
-                        : "text-white/90 hover:text-[#0044ff]"
-                    }`}
+                    className={`menu-link block text-[clamp(36px,6vw,72px)] font-bold transition-colors duration-300 leading-[1.15] tracking-tight ${item === "About" && activePage === "about"
+                      ? "text-[#0044ff]"
+                      : "text-white/90 hover:text-[#0044ff]"
+                      }`}
                     style={{ perspective: "600px" }}
                     onClick={(e) => {
                       setMenuOpen(false);
@@ -505,13 +503,13 @@ function HeroSection({ animateIn }: { animateIn: boolean }) {
           Design, Deploy, And Scale IoT Solutions Smoothly With Enterprise Tools That Keep Your Hardware Aligned And Connected.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center w-full gap-4 pointer-events-auto hero-btn">
-          <GlowButton 
+          <GlowButton
             className="w-full sm:w-[200px]"
             onClick={() => document.getElementById("automation")?.scrollIntoView({ behavior: "smooth" })}
           >
             Request Demo
           </GlowButton>
-          <button 
+          <button
             onClick={() => document.getElementById("solutions")?.scrollIntoView({ behavior: "smooth" })}
             className="bg-white text-gray-850 py-3.5 rounded-xl text-[14px] font-semibold border border-gray-250 shadow-sm hover:bg-gray-50 transition-all duration-300 hover:scale-[1.02] cursor-pointer w-full sm:w-[200px]"
           >
@@ -869,15 +867,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
 
   const splitPrimary = (text: string) => {
     return text.split(" ").map((word, idx) => (
-      <span key={idx} className="reveal-word-primary inline-block mr-[0.22em] transition-colors" style={{ color: "rgba(10, 10, 10, 0.15)" }}>
-        {word}
-      </span>
-    ));
-  };
-
-  const splitSecondary = (text: string) => {
-    return text.split(" ").map((word, idx) => (
-      <span key={idx} className="reveal-word-secondary inline-block mr-[0.22em] transition-colors" style={{ color: "rgba(10, 10, 10, 0.15)" }}>
+      <span key={idx} className="reveal-word-primary inline-block mr-[0.22em] transition-colors" style={{ color: "rgba(10, 10, 10, 0.15)", opacity: 0 }}>
         {word}
       </span>
     ));
@@ -885,48 +875,40 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Scrub primary words to solid black
-      gsap.to(".reveal-word-primary", {
-        color: "#0a0a0a",
-        stagger: 0.02,
+      const heading = headingRef.current;
+      if (!heading) return;
+
+      const elements = heading.querySelectorAll(".reveal-word-primary, .reveal-graphic, .reveal-word-secondary");
+      if (elements.length === 0) return;
+
+      const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: headingRef.current,
-          start: "top 82%",
-          end: "bottom 45%",
+          trigger: heading,
+          start: "top 70%",
+          end: "bottom 35%",
           scrub: 0.8,
         }
       });
 
-      // 2. Scrub secondary words to gray
-      gsap.to(".reveal-word-secondary", {
-        color: "#7c7c80",
-        stagger: 0.02,
-        scrollTrigger: {
-          trigger: headingRef.current,
-          start: "top 75%",
-          end: "bottom 38%",
-          scrub: 0.8,
+      elements.forEach((el) => {
+        if (el.classList.contains("reveal-word-primary")) {
+          tl.to(el, { color: "#0a0a0a", duration: 0.15, opacity: 1, }, ">-0.1");
+        } else if (el.classList.contains("reveal-word-secondary")) {
+          tl.to(el, { color: "#7c7c80", duration: 0.15, opacity: 1, }, ">-0.1");
+        } else if (el.classList.contains("reveal-graphic")) {
+          tl.fromTo(el,
+            { opacity: 0, scale: 0.88 },
+            { opacity: 1, scale: 1, duration: 0.35 },
+            ">-0.08"
+          );
         }
       });
 
-      // 3. Scrub inline graphics to full scale & opacity
-      gsap.fromTo(".reveal-graphic", 
-        { opacity: 0.25, scale: 0.88 },
-        {
-          opacity: 1,
-          scale: 1,
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 80%",
-            end: "bottom 40%",
-            scrub: 0.8,
-          }
-        }
-      );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
+
 
   return (
     <section id="welcome" ref={sectionRef} className="bg-[#f8f9fa] border-t border-gray-200 py-24 md:py-32 px-6 md:px-12 lg:px-20 relative overflow-hidden">
@@ -934,13 +916,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[100px] rounded-full z-0 pointer-events-none" />
 
       <div className="max-w-[1200px] mx-auto flex flex-col justify-between relative z-10">
-        
-        {/* Welcome Tag */}
-        <div className="mb-12 gsap-reveal">
-          <span className="px-4 py-2 rounded-full border border-gray-300 text-[11px] font-mono font-semibold uppercase text-gray-500 tracking-wider bg-white">
-            Welcome
-          </span>
-        </div>
+
 
         {/* Large Text Container with Inline Images */}
         <div className="relative">
@@ -950,7 +926,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
               <svg viewBox="0 0 160 80" className="w-full h-full">
                 <style>{`
                   @keyframes pulseSignal {
-                    0%, 100% { stroke-dashoffset: 200; opacity: 0.6; }
+                    0%, 100% { stroke-dashoffset: 200; opacity: 0; }
                     50% { stroke-dashoffset: 0; opacity: 1; }
                   }
                   .signal-line {
@@ -981,7 +957,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
                 <circle cx="125" cy="40" r="4" fill="#00d2ff" />
               </svg>
             </span>
-            {splitSecondary("Connecting the offline physical world to infinite logic streams, safely, reliably, and always one step ahead.")}
+            {splitPrimary("Connecting the offline physical world to infinite logic streams, safely, reliably, and always one step ahead.")}
           </h2>
         </div>
 
@@ -993,7 +969,7 @@ function WelcomeSection({ setActivePage }: { setActivePage: (p: 'landing' | 'abo
           >
             Get to know us
           </button>
-          
+
           <button
             onClick={handleGetToKnowClick}
             className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:text-black hover:border-black transition-all hover:scale-110 cursor-pointer group bg-white"
@@ -1055,7 +1031,7 @@ function GetStartedSection() {
   return (
     <section ref={sectionRef} className="relative w-full min-h-[500px] lg:h-[600px] py-16 lg:py-0 flex items-center overflow-hidden bg-[#0a0a0a]">
       <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#0044ff]/20 blur-[120px] rounded-full z-0 pointer-events-none" />
-      
+
       {/* Dynamic 2D Halftone Circle Propeller (Inverted white & blue colors) */}
       <div className="anim-circle absolute left-[-5%] lg:left-[8%] top-1/2 -translate-y-1/2 w-full lg:w-[45%] h-[400px] lg:h-[500px] flex items-center justify-center z-0 pointer-events-auto">
         <HalftoneCircle2D />
@@ -1070,13 +1046,13 @@ function GetStartedSection() {
 
 
           <div className="anim-text flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8 lg:mb-10 w-full sm:w-auto">
-            <GlowButton 
+            <GlowButton
               className="w-full sm:w-auto"
               onClick={() => document.getElementById("automation")?.scrollIntoView({ behavior: "smooth" })}
             >
               Start building
             </GlowButton>
-            <button 
+            <button
               onClick={() => alert("Thank you for your interest! A UNITINCAN edge engineering expert will reach out shortly to schedule your demo.")}
               className="w-full sm:w-auto bg-transparent border border-white/20 text-white font-mono text-[13px] font-semibold px-8 py-3.5 rounded-xl hover:bg-white/5 transition-colors duration-300 text-center uppercase tracking-wide cursor-pointer"
             >
